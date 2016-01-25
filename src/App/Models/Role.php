@@ -1,16 +1,17 @@
-<?php namespace Tahq69\ScriptUserManager\Script\Models;
+<?php namespace Crip\UserManager\App\Models;
 
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Role
- * @package Tahq69\ScriptUserManager\Script\Models
+ * @package Crip\UserManager\App\Models
  */
 class Role extends Model
 {
     public function users()
     {
+        // TODO: move user class name to configuration file
         return $this->belongsToMany(User::class);
     }
 

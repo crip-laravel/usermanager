@@ -1,10 +1,10 @@
-<?php namespace Tahq69\ScriptUserManager\Script\Models;
+<?php namespace Crip\UserManager\App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Perm
- * @package Tahq69\ScriptUserManager\Script\Models
+ * @package Crip\UserManager\App\Models
  */
 class Perm extends Model
 {

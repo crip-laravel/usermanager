@@ -1,6 +1,6 @@
 {
-  "name": "tahq69/laravel-usermanager",
-  "description": "Script Laravel usermanager",
+  "name": "crip/usermanager",
+  "description": "Crip Laravel usermanager",
   "require": {
     "laravel/framework": "^5.1",
     "intervention/image": "^2.3",
@@ -8,7 +8,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Tahq69\\ScriptUserManager\\": "src"
+      "Crip\\UserManager\\": "src"
     }
   },
   "license": "MIT",
