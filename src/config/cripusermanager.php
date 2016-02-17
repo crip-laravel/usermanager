@@ -2,4 +2,6 @@
 
 return [
 
+    'user' => \App\User::class
+
 ];
