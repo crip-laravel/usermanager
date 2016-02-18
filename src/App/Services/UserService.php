@@ -1,6 +1,7 @@
 <?php namespace Crip\UserManager\App\Services;
 
 use Crip\Core\Exceptions\BadConfigurationException;
+use Crip\UserManager\App\Repositories\UserRepository;
 use Crip\UserManager\App\UserManager;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -25,11 +26,18 @@ class UserService extends UserServiceEvents
     private $user_class = '';
 
     /**
-     * @param Dispatcher $events
+     * @var UserRepository
      */
-    public function __construct(Dispatcher $events)
+    private $userRepository;
+
+    /**
+     * @param Dispatcher $events
+     * @param UserRepository $userRepository
+     */
+    public function __construct(Dispatcher $events, UserRepository $userRepository)
     {
         parent::__construct($events);
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -41,6 +49,7 @@ class UserService extends UserServiceEvents
         $this->setUser();
         $this->onBeforeCreateUser($request);
 
+        dd($this->userRepository->create($request->all()));
     }
 
 

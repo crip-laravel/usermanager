@@ -1,7 +1,6 @@
 <?php namespace Crip\UserManager\App;
 
-use Crip\Core\App\PackageBase;
-use Crip\UserManager\App\Services\UserService;
+use Crip\Core\Support\PackageBase;
 
 /**
  * Class UserManager

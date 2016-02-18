@@ -1,7 +1,7 @@
 <?php namespace Crip\UserManager;
 
-use Crip\Core\App\CripServiceProvider;
-use Crip\Core\App\PackageBase;
+use Crip\Core\Support\CripServiceProvider;
+use Crip\Core\Support\PackageBase;
 use Crip\UserManager\App\UserManager;
 use Illuminate\Foundation\AliasLoader;
 
