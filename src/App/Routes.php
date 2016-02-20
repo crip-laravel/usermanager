@@ -1,11 +1,12 @@
 <?php
 
 use Crip\UserManager\App\Controllers\UserController;
+use Illuminate\Routing\Router;
+use Mcamara\LaravelLocalization\LaravelLocalization;
 
-Route::group(['prefix' => 'api/v1/user'], function () {
+Route::group(['prefix' => app(LaravelLocalization::class)->setLocale() . '/api/v1/user'], function (Router $router) {
 
-    Route::post('/', UserController::class . '@createUser');
+    $router->post('/', UserController::class . '@createUser');
 
-    Route::get('{id}', UserController::class . '@user');
-
+    $router->post('/auth', UserController::class . '@authenticate');
 });

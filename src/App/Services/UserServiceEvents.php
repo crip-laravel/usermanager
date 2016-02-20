@@ -3,8 +3,11 @@
 use Crip\Core\Contracts\ICripObject;
 use Crip\Core\Events\EventCollector;
 use Crip\UserManager\App\Events\AfterUserCreateEvent;
+use Crip\UserManager\App\Events\AfterUserRoleCreateEvent;
 use Crip\UserManager\App\Events\BeforeUserCreateEvent;
-use Crip\UserManager\App\Events\UserValidatingEvent;
+use Crip\UserManager\App\Events\BeforeUserRoleCreateEvent;
+use Crip\UserManager\App\Events\UserCreateValidateEvent;
+use Crip\UserManager\App\Events\UserRoleCreateValidateEvent;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
@@ -56,7 +59,7 @@ class UserServiceEvents extends EventCollector
     }
 
     /**
-     * Fires user.creating.validate and UserValidatingEvent events
+     * Fires user.creating.validate and UserCreateValidateEvent events
      *
      * @param array $input
      * @param Request $request
@@ -67,7 +70,53 @@ class UserServiceEvents extends EventCollector
     {
         $event = 'user.creating.validate';
         return $this->clearEvents()
-            ->push($this->events->fire(new UserValidatingEvent($request, $input)), UserValidatingEvent::class)
+            ->push($this->events->fire(new UserCreateValidateEvent($request, $input)), UserCreateValidateEvent::class)
+            ->push($this->events->fire($event, [$request, $input]), $event);
+    }
+
+
+    /**
+     * Fires user.creating and BeforeUserCreateEvent events
+     *
+     * @param Request $request
+     * @return $this
+     */
+    protected function onBeforeCreateRole(Request $request)
+    {
+        return $this->clearEvents()
+            ->push($this->events->fire(new BeforeUserRoleCreateEvent($request)), BeforeUserRoleCreateEvent::class)
+            ->push($this->events->fire('user.role.creating', [$request]), 'user.role.creating');
+    }
+
+    /**
+     * Fires user.created and AfterUserCreateEvent events
+     *
+     * @param $user
+     * @return $this
+     */
+    protected function onAfterCreateRole($user)
+    {
+        return $this->clearEvents()
+            ->push($this->events->fire(new AfterUserRoleCreateEvent($user)), AfterUserRoleCreateEvent::class)
+            ->push($this->events->fire('user.role.created', [$user]), 'user.role.created');
+    }
+
+    /**
+     * Fires user.creating.validate and UserCreateValidateEvent events
+     *
+     * @param array $input
+     * @param Request $request
+     *
+     * @return $this
+     */
+    protected function onValidateCreateRole(Request $request, array $input)
+    {
+        $event = 'user.role.creating.validate';
+        return $this->clearEvents()
+            ->push($this->events->fire(
+                new UserRoleCreateValidateEvent($request, $input)),
+                UserRoleCreateValidateEvent::class
+            )
             ->push($this->events->fire($event, [$request, $input]), $event);
     }
 }

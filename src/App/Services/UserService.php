@@ -1,13 +1,17 @@
 <?php namespace Crip\UserManager\App\Services;
 
+use Auth;
 use Crip\Core\Exceptions\BadConfigurationException;
 use Crip\Core\Exceptions\BadEventResultException;
 use Crip\UserManager\App\Repositories\UserRepository;
+use Crip\UserManager\App\Traits\CripUser;
 use Crip\UserManager\App\UserManager;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\JWTAuth;
 
 
 /**
@@ -43,28 +47,6 @@ class UserService extends UserServiceEvents
     }
 
     /**
-     * Redirect the user to the Provider authentication page.
-     *
-     * @param $provider
-     * @return mixed
-     * @throws BadConfigurationException
-     */
-    public function redirectToSocialProvider($provider)
-    {
-        return app(SocialiteService::class)->redirect($provider);
-    }
-
-    /**
-     * Handle social provider callback action for authorisation
-     *
-     * @param $provider
-     */
-    public function handleSocialProviderCallback($provider)
-    {
-        app(SocialiteService::class)->handle($provider);
-    }
-
-    /**
      * @param Request $request
      * @return Model
      * @throws BadConfigurationException
@@ -77,7 +59,7 @@ class UserService extends UserServiceEvents
 
         $input = $this->userRepository->onlyFillable($request->all());
         $validation_result = $this->validateOnEvents('onValidateCreateUser', $request, $input);
-        if($validation_result !== null) {
+        if ($validation_result !== null) {
             return $validation_result;
         }
 
@@ -85,7 +67,34 @@ class UserService extends UserServiceEvents
 
         $this->onAfterCreateUser($user);
 
-        return $user;
+        return $this->authenticate($request);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function authenticate(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+        try {
+            if (!$token = app(JWTAuth::class)->attempt($credentials)) {
+                return response()->json([UserManager::package()->trans('auth.incorrect_attempt')], 401);
+            }
+        } catch (JWTException $e) {
+            return response()->json([UserManager::package()->trans('auth.error')], 500);
+        }
+
+        return response()->json(compact('token'));
+    }
+
+    public function createRole(Request $request)
+    {
+        $this->setUser();
+        $this->onBeforeCreateRole($request);
+
+        //$this->onAfterCreateRole()
+
     }
 
     /**
@@ -98,12 +107,13 @@ class UserService extends UserServiceEvents
     {
         $this->user_class = UserManager::package()->config('user');
         if ($this->checkUserSubclass()) {
-            $this->user = app()->make($this->user_class);
+            $this->user = Auth::check() ? Auth::user() : app()->make($this->user_class);
+
             return $this;
         }
 
         $message = 'User class should be an instance of `%s` and `%s`';
-        $message = sprintf($message, Authenticatable::class, Model::class);
+        $message = sprintf($message, CripUser::class, Model::class);
 
         throw new BadConfigurationException($this, $message);
     }
@@ -115,13 +125,14 @@ class UserService extends UserServiceEvents
      */
     private function checkUserSubclass()
     {
-        if (!is_subclass_of($this->user_class, Authenticatable::class)) {
+        if (!in_array(CripUser::class, class_uses($this->user_class))) {
             return false;
         }
 
         if (!is_subclass_of($this->user_class, Model::class)) {
             return false;
         }
+
         return true;
     }
 

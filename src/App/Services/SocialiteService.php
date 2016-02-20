@@ -7,7 +7,7 @@ use Crip\Core\Exceptions\BadConfigurationException;
 use Crip\UserManager\App\Repositories\SocialLoginRepository;
 use Crip\UserManager\App\Repositories\UserRepository;
 use DB;
-use Socialite;
+use Laravel\Socialite\Contracts\Factory;
 
 /**
  * Class SocialiteService
@@ -24,8 +24,8 @@ class SocialiteService implements ICripObject
     /**
      * @var UserRepository
      */
-
     private $user;
+
     /**
      * @var SocialLoginRepository
      */
@@ -90,12 +90,12 @@ class SocialiteService implements ICripObject
     }
 
     /**
-     * @return Socialite
+     * @return Factory
      */
     protected function socialite()
     {
         if ($this->socialite === null) {
-            $this->socialite = app('Laravel\Socialite\Facades\Socialite');
+            $this->socialite = app(Factory::class);
         }
 
         return $this->socialite;

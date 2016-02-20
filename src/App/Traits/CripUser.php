@@ -1,6 +1,6 @@
-<?php namespace Crip\Usermanager\App\Traits;
+<?php namespace Crip\UserManager\App\Traits;
 
-use Crip\Usermanager\App\Models\Role;
+use Crip\UserManager\App\Models\Role;
 
 /**
  * Class CripUser

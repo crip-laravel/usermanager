@@ -5,10 +5,10 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 
 /**
- * Class UserValidatingEvent
+ * Class UserRoleCreateValidateEvent
  * @package Crip\UserManager\App\Events
  */
-class UserValidatingEvent extends CripEvent
+class UserRoleCreateValidateEvent extends CripEvent
 {
 
     /**
