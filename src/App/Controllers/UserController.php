@@ -31,7 +31,7 @@ class UserController extends Controller implements ICripObject
 
     public function createUser()
     {
-        $this->userService->create($this->request);
+        return $this->userService->create($this->request);
     }
 
     public function user($id)

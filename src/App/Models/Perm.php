@@ -1,13 +1,13 @@
 <?php namespace Crip\UserManager\App\Models;
 
-use Crip\Core\Contracts\ICripObject;
-use Illuminate\Database\Eloquent\Model;
+use Crip\Core\Data\Model;
+
 
 /**
  * Class Perm
  * @package Crip\UserManager\App\Models
  */
-class Perm extends Model implements ICripObject
+class Perm extends Model
 {
     public function roles()
     {

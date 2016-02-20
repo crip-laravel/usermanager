@@ -1,6 +1,7 @@
 <?php namespace Crip\UserManager\App\Services;
 
 use Crip\Core\Exceptions\BadConfigurationException;
+use Crip\Core\Exceptions\BadEventResultException;
 use Crip\UserManager\App\Repositories\UserRepository;
 use Crip\UserManager\App\UserManager;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -15,6 +16,7 @@ use Illuminate\Http\Request;
  */
 class UserService extends UserServiceEvents
 {
+
     /**
      * @var User
      */
@@ -32,26 +34,59 @@ class UserService extends UserServiceEvents
 
     /**
      * @param Dispatcher $events
-     * @param UserRepository $userRepository
+     * @param UserRepository $user
      */
-    public function __construct(Dispatcher $events, UserRepository $userRepository)
+    public function __construct(Dispatcher $events, UserRepository $user)
     {
         parent::__construct($events);
-        $this->userRepository = $userRepository;
+        $this->userRepository = $user;
+    }
+
+    /**
+     * Redirect the user to the Provider authentication page.
+     *
+     * @param $provider
+     * @return mixed
+     * @throws BadConfigurationException
+     */
+    public function redirectToSocialProvider($provider)
+    {
+        return app(SocialiteService::class)->redirect($provider);
+    }
+
+    /**
+     * Handle social provider callback action for authorisation
+     *
+     * @param $provider
+     */
+    public function handleSocialProviderCallback($provider)
+    {
+        app(SocialiteService::class)->handle($provider);
     }
 
     /**
      * @param Request $request
+     * @return Model
      * @throws BadConfigurationException
+     * @throws BadEventResultException
      */
     public function create(Request $request)
     {
         $this->setUser();
         $this->onBeforeCreateUser($request);
 
-        dd($this->userRepository->create($request->all()));
-    }
+        $input = $this->userRepository->onlyFillable($request->all());
+        $validation_result = $this->validateOnEvents('onValidateCreateUser', $request, $input);
+        if($validation_result !== null) {
+            return $validation_result;
+        }
 
+        $user = $this->userRepository->create($input);
+
+        $this->onAfterCreateUser($user);
+
+        return $user;
+    }
 
     /**
      * Set user property from package configurations
@@ -67,8 +102,10 @@ class UserService extends UserServiceEvents
             return $this;
         }
 
-        $error_message = 'User class should be an instance of `%s` and `%s`';
-        throw new BadConfigurationException($this, sprintf($error_message, Authenticatable::class, Model::class));
+        $message = 'User class should be an instance of `%s` and `%s`';
+        $message = sprintf($message, Authenticatable::class, Model::class);
+
+        throw new BadConfigurationException($this, $message);
     }
 
     /**
@@ -87,4 +124,5 @@ class UserService extends UserServiceEvents
         }
         return true;
     }
+
 }
