@@ -6,13 +6,11 @@ use Crip\Core\Exceptions\BadEventResultException;
 use Crip\UserManager\App\Repositories\UserRepository;
 use Crip\UserManager\App\Traits\CripUser;
 use Crip\UserManager\App\UserManager;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\JWTAuth;
-
 
 /**
  * Class UserService
@@ -59,6 +57,7 @@ class UserService extends UserServiceEvents
 
         $input = $this->userRepository->onlyFillable($request->all());
         $validation_result = $this->validateOnEvents('onValidateCreateUser', $request, $input);
+
         if ($validation_result !== null) {
             return $validation_result;
         }
@@ -68,6 +67,34 @@ class UserService extends UserServiceEvents
         $this->onAfterCreateUser($user);
 
         return $this->authenticate($request);
+    }
+
+    /**
+     * @param int $id
+     * @param Request $request
+     *
+     * @return Model|\Illuminate\Http\JsonResponse
+     *
+     * @throws BadConfigurationException
+     */
+    public function update($id, Request $request)
+    {
+        $this->setUser();
+        $this->onBeforeUpdateUser($id, $request);
+
+        $input = $this->userRepository->onlyFillable($request->all());
+        $instance = $this->userRepository->find($id);
+        $validation_result = $this->validateOnEvents('onValidateUpdateUser', $request, $input, $id, $instance);
+
+        if ($validation_result !== null) {
+            return $validation_result;
+        }
+
+        $user = $this->userRepository->update($input, $id);
+
+        $this->onAfterUpdateUser($id, $user);
+
+        return $user;
     }
 
     /**

@@ -1,7 +1,6 @@
 <?php namespace Crip\UserManager\App\Events;
 
 use Crip\Core\Events\CripEvent;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 
 /**

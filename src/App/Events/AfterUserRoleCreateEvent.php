@@ -1,6 +1,7 @@
 <?php namespace Crip\UserManager\App\Events;
 
 use Crip\Core\Events\CripEvent;
+use Crip\UserManager\App\Models\Role;
 
 /**
  * Class AfterUserRoleCreateEvent
@@ -9,15 +10,15 @@ use Crip\Core\Events\CripEvent;
 class AfterUserRoleCreateEvent extends CripEvent
 {
     /**
-     * @var User
+     * @var Role
      */
-    public $user;
+    public $role;
 
     /**
-     * @param $user
+     * @param Role $role
      */
-    public function __construct($user)
+    public function __construct(Role $role)
     {
-        $this->user = $user;
+        $this->role = $role;
     }
 }

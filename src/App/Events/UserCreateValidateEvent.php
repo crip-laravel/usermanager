@@ -1,7 +1,7 @@
 <?php namespace Crip\UserManager\App\Events;
 
 use Crip\Core\Events\CripEvent;
-use Illuminate\Contracts\Validation\Validator;
+use Crip\UserManager\App\UserManager;
 use Illuminate\Http\Request;
 
 /**
@@ -22,6 +22,11 @@ class UserCreateValidateEvent extends CripEvent
     public $request;
 
     /**
+     * @var User
+     */
+    public $model;
+
+    /**
      * @param $validator
      * @param array $input
      * @param Request $request
@@ -30,6 +35,7 @@ class UserCreateValidateEvent extends CripEvent
     {
         $this->input = $input;
         $this->request = $request;
+        $this->model = app(UserManager::package()->config('user'));
     }
 
 }

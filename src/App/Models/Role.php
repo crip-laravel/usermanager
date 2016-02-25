@@ -1,6 +1,7 @@
 <?php namespace Crip\UserManager\App\Models;
 
 use Crip\Core\Data\Model;
+use Crip\UserManager\App\UserManager;
 
 /**
  * Class Role
