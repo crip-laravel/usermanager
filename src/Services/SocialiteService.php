@@ -1,11 +1,11 @@
-<?php namespace Crip\UserManager\App\Services;
+<?php namespace Crip\UserManager\Services;
 
 use Auth;
 use Config;
 use Crip\Core\Contracts\ICripObject;
 use Crip\Core\Exceptions\BadConfigurationException;
-use Crip\UserManager\App\Repositories\SocialLoginRepository;
-use Crip\UserManager\App\Repositories\UserRepository;
+use Crip\UserManager\Repositories\SocialLoginRepository;
+use Crip\UserManager\Repositories\UserRepository;
 use DB;
 use Laravel\Socialite\Contracts\Factory;
 
@@ -51,18 +51,18 @@ class SocialiteService implements ICripObject
         $user = $this->socialite()->driver($provider)->user();
 
         //Check is this email present in DB
-        $existing = $this->social->findByProvider($user->id, $provider);
+        $existing = $this->social->findByProvider($user->getId(), $provider);
 
         if (empty($existing)) {
             //There is no combination of this social id and provider, so create new one
             // As there no use of user if social is not created, do this in database transaction
             $existing = DB::transaction(function () use ($user, $provider) {
                 $socialUser = $this->social->create([
-                    'social_id' => $user->id,
+                    'social_id' => $user->getId(),
                     'provider' => $provider,
                     'user_id' => $this->user->create([
-                        'email' => $user->email,
-                        'name' => $user->name,
+                        'email' => $user->getEmail(),
+                        'name' => $user->getName(),
                     ])->id,
                 ]);
 

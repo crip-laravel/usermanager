@@ -1,7 +1,7 @@
-<?php namespace Crip\UserManager\App\Repositories;
+<?php namespace Crip\UserManager\Repositories;
 
 use Crip\Core\Data\Repository;
-use Crip\UserManager\App\Models\SocialLogin;
+use Crip\UserManager\Models\SocialLogin;
 
 /**
  * Class SocialLoginRepository
@@ -33,8 +33,8 @@ class SocialLoginRepository extends Repository
     }
 
     /**
-     * @param $social_id
-     * @param $provider
+     * @param int $social_id
+     * @param string $provider
      * @return SocialLogin
      */
     public function findByProvider($social_id, $provider)

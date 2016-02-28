@@ -3,7 +3,7 @@
 use Crip\Core\Contracts\ICripObject;
 use Crip\Core\Data\Model;
 use Crip\Core\Events\EventCollector;
-use Crip\UserManager\App\Events\AfterUserCreateEvent;
+use Crip\UserManager\App\Events\UserCreatedEvent;
 use Crip\UserManager\App\Events\AfterUserRoleCreateEvent;
 use Crip\UserManager\App\Events\AfterUserUpdateEvent;
 use Crip\UserManager\App\Events\BeforeUserCreateEvent;
@@ -51,7 +51,7 @@ class UserServiceEvents extends EventCollector
     }
 
     /**
-     * Fires user.created and AfterUserCreateEvent events
+     * Fires user.created and UserCreatedEvent events
      *
      * @param $user
      * @return $this
@@ -59,7 +59,7 @@ class UserServiceEvents extends EventCollector
     protected function onAfterCreateUser($user)
     {
         return $this->clearEvents()
-            ->push($this->events->fire(new AfterUserCreateEvent($user)), AfterUserCreateEvent::class)
+            ->push($this->events->fire(new UserCreatedEvent($user)), UserCreatedEvent::class)
             ->push($this->events->fire('user.created', [$user]), 'user.created');
     }
 
@@ -143,7 +143,7 @@ class UserServiceEvents extends EventCollector
     }
 
     /**
-     * Fires user.created and AfterUserCreateEvent events
+     * Fires user.created and UserCreatedEvent events
      *
      * @param Role $role
      * @return $this

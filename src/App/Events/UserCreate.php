@@ -4,18 +4,24 @@ use Crip\Core\Events\CripEvent;
 use Illuminate\Http\Request;
 
 /**
- * Class BeforeUserCreateEvent
+ * Class UserCreate
  * @package Crip\UserManager\App\Events
  */
-class BeforeUserCreateEvent extends CripEvent
+class UserCreate extends CripEvent
 {
     /**
      * @var Request
      */
     public $request;
 
-    public function __construct(Request $request)
+    /**
+     * @var \App\User
+     */
+    private $auth_user;
+
+    public function __construct(Request $request, $auth_user)
     {
         $this->request = $request;
+        $this->auth_user = $auth_user;
     }
 }

@@ -1,11 +1,10 @@
-<?php namespace Crip\UserManager\App\Models;
+<?php namespace Crip\UserManager\Models;
 
 use Crip\Core\Data\Model;
-use Crip\UserManager\App\UserManager;
 
 /**
  * Class SocialLogin
- * @package Crip\UserManager\App\Models
+ * @package Crip\UserManager\Models
  */
 class SocialLogin extends Model
 {
@@ -30,7 +29,7 @@ class SocialLogin extends Model
      */
     public function User()
     {
-        return $this->belongsTo(UserManager::package()->config('name'));
+        return $this->belongsTo(config('auth.model'));
     }
 
 }

@@ -1,10 +1,9 @@
 <?php namespace Crip\UserManager\App\Controllers;
 
 use Crip\Core\Contracts\ICripObject;
-use Crip\UserManager\App\Services\UserService;
+use Crip\UserManager\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Response;
 
 /**
  * Class UserController

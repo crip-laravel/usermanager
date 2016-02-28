@@ -1,12 +1,12 @@
-<?php namespace Crip\UserManager\App\Models;
+<?php namespace Crip\UserManager\Repositories;
 
 use Crip\Core\Data\Repository;
 
 /**
- * Class PermRepository
- * @package Crip\UserManager\App\Models
+ * Class UserRepository
+ * @package Crip\UserManager\App\Repositories
  */
-class PermRepository extends Repository
+class UserRepository extends Repository
 {
 
     /**
@@ -16,7 +16,7 @@ class PermRepository extends Repository
      */
     public function model()
     {
-        return Perm::class;
+        return config('auth.model');
     }
 
     /**
@@ -27,8 +27,9 @@ class PermRepository extends Repository
     public function relations()
     {
         return [
-            'perms',
-            'perms.users'
+            'roles',
+            'roles.perms',
+            'perms'
         ];
     }
 }

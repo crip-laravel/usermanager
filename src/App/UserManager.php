@@ -1,7 +1,7 @@
 <?php namespace Crip\UserManager\App;
 
 use Crip\Core\Support\PackageBase;
-use Crip\UserManager\App\Services\SocialiteService;
+use Crip\UserManager\Services\SocialiteService;
 
 /**
  * Class UserManager
@@ -13,6 +13,11 @@ class UserManager
      * @var PackageBase
      */
     private static $package;
+
+    /**
+     * @var SocialiteService
+     */
+    private $socialite;
 
     /**
      * @return PackageBase
@@ -27,6 +32,18 @@ class UserManager
     }
 
     /**
+     * @return SocialiteService
+     */
+    private function socialite()
+    {
+        if ($this->socialite == null) {
+            $this->socialite = app(SocialiteService::class);
+        }
+
+        return $this->socialite;
+    }
+
+    /**
      * Redirect the user to the Provider authentication page.
      *
      * @param $provider
@@ -35,7 +52,7 @@ class UserManager
      */
     public function redirectToSocialProvider($provider)
     {
-        return app(SocialiteService::class)->redirect($provider);
+        return $this->socialite()->redirect($provider);
     }
 
     /**
@@ -45,6 +62,6 @@ class UserManager
      */
     public function handleSocialProviderCallback($provider)
     {
-        app(SocialiteService::class)->handle($provider);
+        $this->socialite()->handle($provider);
     }
 }
