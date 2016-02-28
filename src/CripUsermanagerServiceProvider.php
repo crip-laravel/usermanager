@@ -13,10 +13,17 @@ class CripUserManagerServiceProvider extends CripServiceProvider
 {
     private static $package;
 
+    /**
+     * php artisan vendor:publish --provider="Crip\UserManager\CripUserManagerServiceProvider"
+     *
+     * @return PackageBase
+     */
     private static function package()
     {
         if (!self::$package) {
             self::$package = new PackageBase('cripusermanager', __DIR__);
+            self::$package->publish_public = false;
+            self::$package->enable_views = false;
         }
 
         return self::$package;
