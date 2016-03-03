@@ -64,4 +64,9 @@ class UserController extends Controller implements ICripObject
         return $this->userService->authenticate($this->request);
     }
 
+    public function profile()
+    {
+        return \Auth::user();
+    }
+
 }
